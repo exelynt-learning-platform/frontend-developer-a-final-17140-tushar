@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Employee Management Application (React + Redux Toolkit)
 
 A modern, responsive, full-featured Employee Management Web Application built using **React**, **Redux Toolkit**, and modern CSS glassmorphism styling.
@@ -105,3 +106,7 @@ c:/Multigenesys TASK/
 - `POST /employee` - Create employee record
 - `PUT /employee/:id` - Update employee record
 - `DELETE /employee/:id` - Delete employee record
+=======
+# frontend-developer-a-final-17140-tushar
+Final Project Assignment - This repository contains the complete final project code and documentation.
+>>>>>>> c118ac09e1ffcc09223f866b1e656316c4efefe2
