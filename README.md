@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Employee Management Application (React + Redux Toolkit)
 
 A modern, responsive, full-featured Employee Management Web Application built using **React**, **Redux Toolkit**, and modern CSS glassmorphism styling.
