@@ -66,8 +66,11 @@ export const fetchCountriesApi = async () => {
     }
     return MOCK_COUNTRIES;
   } catch (err) {
-    console.warn('Country API fetch failed or timed out, using fallback mock data.', err);
-    return MOCK_COUNTRIES;
+    if (err.name === 'AbortError' || err.message?.includes('NetworkError') || err.message?.includes('Failed to fetch')) {
+      console.warn('Country API network timeout/failure, using fallback mock data.', err);
+      return MOCK_COUNTRIES;
+    }
+    throw err;
   }
 };
 
@@ -78,8 +81,11 @@ export const fetchEmployeesApi = async () => {
     const data = await res.json();
     return Array.isArray(data) ? data : MOCK_EMPLOYEES;
   } catch (err) {
-    console.warn('Employees API fetch failed, using fallback mock data.', err);
-    return MOCK_EMPLOYEES;
+    if (err.name === 'AbortError' || err.message?.includes('NetworkError') || err.message?.includes('Failed to fetch')) {
+      console.warn('Employees API network timeout/failure, using fallback mock data.', err);
+      return MOCK_EMPLOYEES;
+    }
+    throw err;
   }
 };
 

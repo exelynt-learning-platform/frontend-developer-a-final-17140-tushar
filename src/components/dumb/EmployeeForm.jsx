@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 
+export const MIN_NAME_LENGTH = 2;
+export const MAX_NAME_LENGTH = 50;
+export const MIN_MOBILE_LENGTH = 7;
+export const MAX_MOBILE_LENGTH = 15;
+
 export const validateEmployeeForm = (formData) => {
   const errors = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const mobileRegex = /^[0-9+\s-]{7,15}$/;
+  const mobileRegex = new RegExp(`^[0-9+\\s-]{${MIN_MOBILE_LENGTH},${MAX_MOBILE_LENGTH}}$`);
 
   if (!formData.name || !formData.name.trim()) {
     errors.name = 'Full Name is required.';
-  } else if (formData.name.trim().length < 2) {
-    errors.name = 'Name must be at least 2 characters.';
-  } else if (formData.name.trim().length > 50) {
-    errors.name = 'Name cannot exceed 50 characters.';
+  } else if (formData.name.trim().length < MIN_NAME_LENGTH) {
+    errors.name = `Name must be at least ${MIN_NAME_LENGTH} characters.`;
+  } else if (formData.name.trim().length > MAX_NAME_LENGTH) {
+    errors.name = `Name cannot exceed ${MAX_NAME_LENGTH} characters.`;
   }
 
   if (!formData.email || !formData.email.trim()) {
@@ -23,7 +28,7 @@ export const validateEmployeeForm = (formData) => {
   if (!formData.mobile || !formData.mobile.trim()) {
     errors.mobile = 'Mobile number is required.';
   } else if (!mobileRegex.test(formData.mobile.trim())) {
-    errors.mobile = 'Enter a valid mobile number (7-15 digits).';
+    errors.mobile = `Enter a valid mobile number (${MIN_MOBILE_LENGTH}-${MAX_MOBILE_LENGTH} digits).`;
   }
 
   if (!formData.country || !formData.country.trim()) {
