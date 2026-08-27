@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   fetchEmployees,
   searchEmployeeById,
@@ -10,6 +10,8 @@ import {
   clearMessages
 } from '../store/employeeSlice';
 import { fetchCountries } from '../store/countrySlice';
+import { useEmployeeData } from '../hooks/useEmployeeData';
+import { useEmployeeModals } from '../hooks/useEmployeeModals';
 import { EmployeeTable } from './dumb/EmployeeTable';
 import { EmployeeForm } from './dumb/EmployeeForm';
 import { SearchBar } from './dumb/SearchBar';
@@ -27,34 +29,22 @@ export const EmployeeManagement = () => {
     isSearching,
     loading,
     error,
-    successMessage
-  } = useSelector((state) => state.employee);
+    successMessage,
+    countries
+  } = useEmployeeData();
 
-  const { countries } = useSelector((state) => state.country);
+  const {
+    isFormModalOpen,
+    editingEmployee,
+    deletingEmployee,
+    openAddModal,
+    openEditModal,
+    closeFormModal,
+    openDeleteModal,
+    closeDeleteModal
+  } = useEmployeeModals();
 
   const [searchId, setSearchId] = useState('');
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [editingEmployee, setEditingEmployee] = useState(null);
-  const [deletingEmployee, setDeletingEmployee] = useState(null);
-
-  useEffect(() => {
-    if (employees.length === 0 && !loading) {
-      dispatch(fetchEmployees());
-    }
-    if (countries.length === 0) {
-      dispatch(fetchCountries());
-    }
-  }, [dispatch, employees.length, countries.length, loading]);
-
-  // Clear success and error notifications automatically after 4 seconds
-  useEffect(() => {
-    if (successMessage || error) {
-      const timer = setTimeout(() => {
-        dispatch(clearMessages());
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [successMessage, error, dispatch]);
 
   const handleSearch = (id) => {
     dispatch(searchEmployeeById(id));
@@ -65,34 +55,19 @@ export const EmployeeManagement = () => {
     dispatch(clearSearch());
   };
 
-  const handleOpenAddForm = () => {
-    setEditingEmployee(null);
-    setIsFormModalOpen(true);
-  };
-
-  const handleOpenEditForm = (employee) => {
-    setEditingEmployee(employee);
-    setIsFormModalOpen(true);
-  };
-
   const handleFormSubmit = async (formData) => {
     if (editingEmployee) {
       await dispatch(updateEmployee({ id: editingEmployee.id, data: formData }));
     } else {
       await dispatch(addEmployee(formData));
     }
-    setIsFormModalOpen(false);
-    setEditingEmployee(null);
-  };
-
-  const handleDeletePrompt = (employee) => {
-    setDeletingEmployee(employee);
+    closeFormModal();
   };
 
   const handleConfirmDelete = async () => {
     if (deletingEmployee) {
       await dispatch(deleteEmployee(deletingEmployee.id));
-      setDeletingEmployee(null);
+      closeDeleteModal();
     }
   };
 
@@ -127,7 +102,7 @@ export const EmployeeManagement = () => {
           >
             <RefreshCw size={16} /> Refresh
           </button>
-          <button onClick={handleOpenAddForm} className="btn btn-primary">
+          <button onClick={openAddModal} className="btn btn-primary">
             <Plus size={18} /> Add Employee
           </button>
         </div>
@@ -161,9 +136,7 @@ export const EmployeeManagement = () => {
         {/* Active Search Filter Banner */}
         {searchedEmployee && (
           <div className="search-filter-banner">
-            <span>
-              Showing search results matching filter query.
-            </span>
+            <span>Showing search results matching filter query.</span>
             <button onClick={handleClearSearch} className="btn-link">
               Show All Employees
             </button>
@@ -190,7 +163,7 @@ export const EmployeeManagement = () => {
           <EmptyState
             title="No Employees Recorded"
             message="No employee profiles exist in the system yet."
-            onAddClick={handleOpenAddForm}
+            onAddClick={openAddModal}
           />
         )}
 
@@ -198,8 +171,8 @@ export const EmployeeManagement = () => {
         {!loading && !searchError && displayedEmployees.length > 0 && (
           <EmployeeTable
             employees={displayedEmployees}
-            onEdit={handleOpenEditForm}
-            onDelete={handleDeletePrompt}
+            onEdit={openEditModal}
+            onDelete={openDeleteModal}
           />
         )}
       </main>
@@ -210,11 +183,7 @@ export const EmployeeManagement = () => {
           <div className="modal-content modal-form">
             <div className="modal-header">
               <h3>{editingEmployee ? 'Edit Employee Details' : 'Create New Employee'}</h3>
-              <button
-                onClick={() => setIsFormModalOpen(false)}
-                className="btn-icon"
-                aria-label="Close modal"
-              >
+              <button onClick={closeFormModal} className="btn-icon" aria-label="Close modal">
                 ×
               </button>
             </div>
@@ -223,7 +192,7 @@ export const EmployeeManagement = () => {
                 initialData={editingEmployee}
                 countries={countries}
                 onSubmit={handleFormSubmit}
-                onCancel={() => setIsFormModalOpen(false)}
+                onCancel={closeFormModal}
                 isLoading={loading}
               />
             </div>
@@ -241,7 +210,7 @@ export const EmployeeManagement = () => {
             : ''
         }
         onConfirm={handleConfirmDelete}
-        onCancel={() => setDeletingEmployee(null)}
+        onCancel={closeDeleteModal}
         isLoading={loading}
       />
     </div>

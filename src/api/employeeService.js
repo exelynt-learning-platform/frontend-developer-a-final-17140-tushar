@@ -102,11 +102,15 @@ export const fetchEmployeeByIdApi = async (id) => {
 
 export const createEmployeeApi = async (employeeData) => {
   try {
-    const res = await fetch(`${BASE_URL}/employee`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(employeeData)
-    });
+    const res = await fetchWithTimeout(
+      `${BASE_URL}/employee`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(employeeData)
+      },
+      5000
+    );
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -116,11 +120,15 @@ export const createEmployeeApi = async (employeeData) => {
 
 export const updateEmployeeApi = async (id, employeeData) => {
   try {
-    const res = await fetch(`${BASE_URL}/employee/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(employeeData)
-    });
+    const res = await fetchWithTimeout(
+      `${BASE_URL}/employee/${id}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(employeeData)
+      },
+      5000
+    );
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -130,9 +138,13 @@ export const updateEmployeeApi = async (id, employeeData) => {
 
 export const deleteEmployeeApi = async (id) => {
   try {
-    const res = await fetch(`${BASE_URL}/employee/${id}`, {
-      method: 'DELETE'
-    });
+    const res = await fetchWithTimeout(
+      `${BASE_URL}/employee/${id}`,
+      {
+        method: 'DELETE'
+      },
+      5000
+    );
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return id;
   } catch (err) {

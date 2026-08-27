@@ -28,18 +28,23 @@ export const searchEmployeeById = createAsyncThunk(
     const cleanQuery = query.trim().toLowerCase();
     const state = getState();
 
-    // 1. Search locally in employee list by ID or Name
-    const matches = state.employee.employees.filter((emp) => {
-      const matchId = String(emp.id).toLowerCase() === cleanQuery;
-      const matchName = emp.name && emp.name.toLowerCase().includes(cleanQuery);
-      return matchId || matchName;
-    });
-
-    if (matches.length > 0) {
-      return matches;
+    // 1. Prioritize exact ID match first
+    const exactIdMatch = state.employee.employees.find(
+      (emp) => String(emp.id).toLowerCase() === cleanQuery
+    );
+    if (exactIdMatch) {
+      return [exactIdMatch];
     }
 
-    // 2. If single digit/numeric ID query, attempt API call
+    // 2. Fall back to name-based search
+    const nameMatches = state.employee.employees.filter((emp) =>
+      emp.name && emp.name.toLowerCase().includes(cleanQuery)
+    );
+    if (nameMatches.length > 0) {
+      return nameMatches;
+    }
+
+    // 3. Attempt API lookup by ID if numeric
     try {
       const data = await fetchEmployeeByIdApi(query.trim());
       if (data) return [data];
@@ -174,14 +179,20 @@ const employeeSlice = createSlice({
         // If search is active, re-run search query match logic against updated employee
         if (state.searchQuery) {
           const query = state.searchQuery.trim().toLowerCase();
-          const matches = state.employees.filter((emp) => {
-            const matchId = String(emp.id).toLowerCase() === query;
-            const matchName = emp.name && emp.name.toLowerCase().includes(query);
-            return matchId || matchName;
-          });
-          state.searchedEmployee = matches.length > 0 ? matches : null;
-          if (matches.length === 0) {
-            state.searchError = `No employee found matching "${state.searchQuery}"`;
+          const exactIdMatch = state.employees.find(
+            (emp) => String(emp.id).toLowerCase() === query
+          );
+          if (exactIdMatch) {
+            state.searchedEmployee = [exactIdMatch];
+            state.searchError = null;
+          } else {
+            const matches = state.employees.filter((emp) =>
+              emp.name && emp.name.toLowerCase().includes(query)
+            );
+            state.searchedEmployee = matches.length > 0 ? matches : null;
+            if (matches.length === 0) {
+              state.searchError = `No employee found matching "${state.searchQuery}"`;
+            }
           }
         } else if (Array.isArray(state.searchedEmployee)) {
           const sIndex = state.searchedEmployee.findIndex((e) => String(e.id) === String(action.payload.id));
