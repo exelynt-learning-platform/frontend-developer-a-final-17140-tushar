@@ -97,8 +97,7 @@ export const createEmployeeApi = async (employeeData) => {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
-    console.warn('Create employee API failed, producing local mock response.', err);
-    return { ...employeeData, id: String(Date.now()) };
+    throw err;
   }
 };
 
@@ -112,8 +111,7 @@ export const updateEmployeeApi = async (id, employeeData) => {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
-    console.warn('Update employee API failed, producing local mock response.', err);
-    return { ...employeeData, id };
+    throw err;
   }
 };
 
@@ -125,7 +123,6 @@ export const deleteEmployeeApi = async (id) => {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return id;
   } catch (err) {
-    console.warn('Delete employee API failed, returning local success ID.', err);
-    return id;
+    throw err;
   }
 };
