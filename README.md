@@ -109,4 +109,5 @@ c:/Multigenesys TASK/
 =======
 # frontend-developer-a-final-17140-tushar
 Final Project Assignment - This repository contains the complete final project code and documentation.
->>>>>>> c118ac09e1ffcc09223f866b1e656316c4efefe2
+
+Submission update for Exelynt review.
