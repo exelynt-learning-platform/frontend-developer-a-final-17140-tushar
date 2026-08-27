@@ -38,9 +38,13 @@ export const EmployeeManagement = () => {
   const [deletingEmployee, setDeletingEmployee] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchEmployees());
-    dispatch(fetchCountries());
-  }, [dispatch]);
+    if (employees.length === 0 && !loading) {
+      dispatch(fetchEmployees());
+    }
+    if (countries.length === 0) {
+      dispatch(fetchCountries());
+    }
+  }, [dispatch, employees.length, countries.length, loading]);
 
   // Clear success and error notifications automatically after 4 seconds
   useEffect(() => {

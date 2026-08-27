@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Employee Management Application (React + Redux Toolkit)
 
 A modern, responsive, full-featured Employee Management Web Application built using **React**, **Redux Toolkit**, and modern CSS glassmorphism styling.
@@ -23,6 +22,7 @@ A modern, responsive, full-featured Employee Management Web Application built us
   - Integrated with mock APIs:
     - `https://669b3f09276e45187d34eb4e.mockapi.io/api/v1/country`
     - `https://669b3f09276e45187d34eb4e.mockapi.io/api/v1/employee`
+  - Cross-browser timeout handling using standard `AbortController`.
   - Includes offline / timeout fallback mock data to ensure application reliability during API outages or rate limits.
 - **State Management & Architecture**:
   - Global application state managed via **Redux Toolkit** (`createSlice`, `createAsyncThunk`).
@@ -106,8 +106,3 @@ c:/Multigenesys TASK/
 - `POST /employee` - Create employee record
 - `PUT /employee/:id` - Update employee record
 - `DELETE /employee/:id` - Delete employee record
-=======
-# frontend-developer-a-final-17140-tushar
-Final Project Assignment - This repository contains the complete final project code and documentation.
-
-Submission update for Exelynt review.

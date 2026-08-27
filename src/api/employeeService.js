@@ -39,9 +39,22 @@ export const MOCK_EMPLOYEES = [
 
 const BASE_URL = 'https://669b3f09276e45187d34eb4e.mockapi.io/api/v1';
 
+const fetchWithTimeout = async (url, options = {}, timeoutMs = 5000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+};
+
 export const fetchCountriesApi = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/country`, { signal: AbortSignal.timeout(5000) });
+    const res = await fetchWithTimeout(`${BASE_URL}/country`, {}, 5000);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     if (Array.isArray(data) && data.length > 0) {
@@ -60,7 +73,7 @@ export const fetchCountriesApi = async () => {
 
 export const fetchEmployeesApi = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/employee`, { signal: AbortSignal.timeout(5000) });
+    const res = await fetchWithTimeout(`${BASE_URL}/employee`, {}, 5000);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     return Array.isArray(data) ? data : MOCK_EMPLOYEES;
@@ -72,7 +85,7 @@ export const fetchEmployeesApi = async () => {
 
 export const fetchEmployeeByIdApi = async (id) => {
   try {
-    const res = await fetch(`${BASE_URL}/employee/${id}`, { signal: AbortSignal.timeout(5000) });
+    const res = await fetchWithTimeout(`${BASE_URL}/employee/${id}`, {}, 5000);
     if (res.status === 404) {
       return null;
     }

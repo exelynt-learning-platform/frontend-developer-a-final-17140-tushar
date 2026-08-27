@@ -171,7 +171,19 @@ const employeeSlice = createSlice({
         if (index !== -1) {
           state.employees[index] = action.payload;
         }
-        if (Array.isArray(state.searchedEmployee)) {
+        // If search is active, re-run search query match logic against updated employee
+        if (state.searchQuery) {
+          const query = state.searchQuery.trim().toLowerCase();
+          const matches = state.employees.filter((emp) => {
+            const matchId = String(emp.id).toLowerCase() === query;
+            const matchName = emp.name && emp.name.toLowerCase().includes(query);
+            return matchId || matchName;
+          });
+          state.searchedEmployee = matches.length > 0 ? matches : null;
+          if (matches.length === 0) {
+            state.searchError = `No employee found matching "${state.searchQuery}"`;
+          }
+        } else if (Array.isArray(state.searchedEmployee)) {
           const sIndex = state.searchedEmployee.findIndex((e) => String(e.id) === String(action.payload.id));
           if (sIndex !== -1) {
             state.searchedEmployee[sIndex] = action.payload;
